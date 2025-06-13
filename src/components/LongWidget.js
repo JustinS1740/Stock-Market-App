@@ -92,7 +92,7 @@ const LongWidget = ({ symbol = "MSFT" }) => {
             </p>
             </div>
         </div>
-        <div style={{ flex: 1, height: "100"}}>
+        <div style={{ flex: 1, height: "100%"}}>
         <ResponsiveContainer width="100%" height="100%">
             <LineChart 
                 data={data}

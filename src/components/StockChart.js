@@ -104,7 +104,7 @@ const StockChart = ({ symbol = "AAPL" }) => {
             <div><strong>52 Week Range:</strong> 53.15 - 137.98</div>
         </div>
         
-        <ResponsiveContainer width="100%" height={100}>
+        <ResponsiveContainer width="100%" height={120}>
             <LineChart 
                 data={data}
                 onMouseMove={(e) => {
