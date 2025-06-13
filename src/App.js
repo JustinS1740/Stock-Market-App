@@ -12,7 +12,9 @@ function App() {
       <div style={{ flex: 1, padding: "20px", backgroundColor: "#e8f9fd", }}>
         <h1>Stock Dashboard</h1>
         <StockRow />
-        <StockChart symbol="AAPL" />
+        <div style={{ marginTop: "2rem" }}>
+          <StockChart symbol="AAPL" />
+        </div>
       </div>
     </div>
   );

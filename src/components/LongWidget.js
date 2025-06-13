@@ -6,8 +6,9 @@ import {
     XAxis,
     Tooltip,
     ResponsiveContainer,
+    YAxis,
 } from "recharts"
-import { ArrowUpRight } from "lucide-react";
+import { ArrowUpRight, ArrowDownRight } from "lucide-react";
 
 const API_KEY = process.env.REACT_APP_STOCK_API_KEY;
 
@@ -77,24 +78,22 @@ const LongWidget = ({ symbol = "MSFT" }) => {
     const volumeValue = lastDataPoint.volume ?? "--";
 
     return (
-    <div style={{ backgroundColor: "#fff", padding: "1rem", width: "300px", height: "100px", borderRadius: "12px", boxShadow: "0 0 8px rgba(0,0,0,0.1)" }}>
+    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", backgroundColor: "#fff", padding: "1rem", width: "270px", height: "100px", borderRadius: "12px", boxShadow: "0 0 8px rgba(0,0,0,0.1)" }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
             <div>
-            <h2 style={{ fontSize: '1.125rem', fontWeight: 600 }}>{meta.name || symbol}</h2>
-            <p style={{ fontSize: '0.875rem', color: '#6b7280' }}>{symbol}</p>
-            </div>
-            <div className="text-right">
-            <p style={{ fontSize: '1.25rem', fontWeight: 'bold', color: '#2563eb' }}>
+            <h2 style={{ fontSize: '1.1rem', fontWeight: 600, margin: "0" }}>{meta.name || symbol}</h2>
+            <p style={{ fontSize: '0.875rem', color: '#6b7280', margin: "0" }}>{symbol}</p>
+            <p style={{ fontSize: '1.1rem', fontWeight: 'bold', color: '#2563eb', margin: "0" }}>
                 {currentPrice.toFixed(2)} USD
             </p>
-            <p style={{ fontSize: '0.875rem', color: '#16a34a', display: 'flex', alignItems: 'center', justifyContent: 'flex-end', columnGap: '0.25rem' }}>
-                <ArrowUpRight size={16} />
+            <p style={{ fontSize: '0.8rem', color: priceChange >= 0 ? '#16a34a' : '#dc2626', display: 'flex', alignItems: 'center', columnGap: '0.25rem', margin: "0" }}>
+                {priceChange >= 0 ? <ArrowUpRight size={16} /> : <ArrowDownRight size={16} />}
                 {priceChange.toFixed(2)} ({priceChangePercent}%)
             </p>
             </div>
         </div>
-        <div style={{ flex: 1, height: 120}}>
-        <ResponsiveContainer width="30%" height={100}>
+        <div style={{ flex: 1, height: "100%"}}>
+        <ResponsiveContainer width="100%" height="100%">
             <LineChart 
                 data={data}
                 onMouseMove={(e) => {
@@ -104,6 +103,7 @@ const LongWidget = ({ symbol = "MSFT" }) => {
                 }}
             >
             <XAxis dataKey="datetime" hide />
+            <YAxis domain={[0, 'dataMax']} hide />
             <Tooltip />
             <Line
                 type="monotone"
