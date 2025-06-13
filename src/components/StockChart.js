@@ -4,10 +4,11 @@ import {
     LineChart,
     Line,
     XAxis,
+    YAxis,
     Tooltip,
     ResponsiveContainer,
 } from "recharts"
-import { ArrowUpRight } from "lucide-react";
+import { ArrowUpRight, ArrowDownRight } from "lucide-react";
 
 const API_KEY = process.env.REACT_APP_STOCK_API_KEY;
 
@@ -29,6 +30,13 @@ const StockChart = ({ symbol = "AAPL" }) => {
                     }
                 );
 
+                const nameRes = await axios.get('https://api.twelvedata.com/symbol_search', {
+                    params: {
+                        symbol: symbol,
+                        apikey: API_KEY,
+                    },
+                });
+
                 console.log("API Response:", res.data);
                 console.log("Requested symbol:", symbol);
 
@@ -43,8 +51,11 @@ const StockChart = ({ symbol = "AAPL" }) => {
                     volume: parseInt(point.volume),
                 }));
 
+                const companyName =
+                    nameRes.data?.data?.[0]?.instrument_name || symbol;
+
                 setData(chartData);
-                setMeta(res.data.meta);
+                setMeta({...res.data.meta, name: companyName,});
             } catch (err) {
                 console.error("Failed to fetch data", err);
             }
@@ -70,15 +81,15 @@ const StockChart = ({ symbol = "AAPL" }) => {
     <div style={{ backgroundColor: "#fff", padding: "1rem", width: "300px", borderRadius: "12px", boxShadow: "0 0 8px rgba(0,0,0,0.1)" }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
             <div>
-            <h2 style={{ fontSize: '1.125rem', fontWeight: 600 }}>Apple Inc.</h2>
+            <h2 style={{ fontSize: '1.125rem', fontWeight: 600 }}>{meta.name || symbol}</h2>
             <p style={{ fontSize: '0.875rem', color: '#6b7280' }}>{symbol}</p>
             </div>
             <div className="text-right">
             <p style={{ fontSize: '1.25rem', fontWeight: 'bold', color: '#2563eb' }}>
                 {currentPrice.toFixed(2)} USD
             </p>
-            <p style={{ fontSize: '0.875rem', color: '#16a34a', display: 'flex', alignItems: 'center', justifyContent: 'flex-end', columnGap: '0.25rem' }}>
-                <ArrowUpRight size={16} />
+            <p style={{ fontSize: '0.875rem', color: priceChange >= 0 ? '#16a34a' : '#dc2626', display: 'flex', alignItems: 'center', justifyContent: 'flex-end', columnGap: '0.25rem' }}>
+                {priceChange >= 0 ? <ArrowUpRight size={16} /> : <ArrowDownRight size={16} />}
                 {priceChange.toFixed(2)} ({priceChangePercent}%)
             </p>
             </div>
@@ -92,7 +103,7 @@ const StockChart = ({ symbol = "AAPL" }) => {
             <div><strong>Day Range:</strong> 109.16 - 112.86</div>
             <div><strong>52 Week Range:</strong> 53.15 - 137.98</div>
         </div>
-
+        
         <ResponsiveContainer width="100%" height={100}>
             <LineChart 
                 data={data}
@@ -103,6 +114,7 @@ const StockChart = ({ symbol = "AAPL" }) => {
                 }}
             >
             <XAxis dataKey="datetime" hide />
+            <YAxis domain={[0, 'dataMax']} hide />
             <Tooltip />
             <Line
                 type="monotone"
