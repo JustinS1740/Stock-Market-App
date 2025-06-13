@@ -77,6 +77,44 @@ const LongWidget = ({ symbol = "MSFT" }) => {
     const prevClosePrice = prevDataPoint.close ?? "--";
     const volumeValue = lastDataPoint.volume ?? "--";
 
+     const CustomCursor = ({ points, width, height }) => {
+        if (!points || !points.length) return null;
+
+        const { x } = points[0];
+        const lineHeight = "70";
+        const yOffset = "10";
+
+        return (
+            <line
+                x1={x}
+                y1={yOffset}
+                x2={x}
+                y2={lineHeight}
+                stroke="#ccc"
+                strokeWidth={2}
+                pointerEvents="none"
+            />
+        );
+    };
+
+    const CustomTooltip = ({ active, payload, label }) => {
+        if (!active || !payload || !payload.length) return null;
+
+        return (
+            <div style={{
+                background: '#fff',
+                border: '1px solid #ccc',
+                padding: '4px 8px',
+                fontSize: '12px',
+                borderRadius: '4px',
+            }}>
+                <p style={{ margin: 0 }}>{label}</p>
+                <p style={{ color: '#007bff', margin: 0 }}>{payload[0].value.toFixed(2)} USD</p>
+            </div>
+        );
+    };
+
+
     return (
     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", backgroundColor: "#fff", padding: "1rem", width: "270px", height: "100px", borderRadius: "12px", boxShadow: "0 0 8px rgba(0,0,0,0.1)" }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
@@ -92,7 +130,7 @@ const LongWidget = ({ symbol = "MSFT" }) => {
             </p>
             </div>
         </div>
-        <div style={{ flex: 1, height: "100%"}}>
+        <div style={{ flex: 1, height: "100%", marginTop: "5rem"}}>
         <ResponsiveContainer width="100%" height="100%">
             <LineChart 
                 data={data}
@@ -104,7 +142,7 @@ const LongWidget = ({ symbol = "MSFT" }) => {
             >
             <XAxis dataKey="datetime" hide />
             <YAxis domain={[0, 'dataMax']} hide />
-            <Tooltip />
+            <Tooltip content={<CustomTooltip />} cursor={<CustomCursor />} />
             <Line
                 type="monotone"
                 dataKey="close"
